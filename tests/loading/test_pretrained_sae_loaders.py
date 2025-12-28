@@ -1223,9 +1223,10 @@ def test_dictionary_learning_sae_huggingface_loader_1_andy():
         force_download=False,
         cfg_overrides=None,
     )
-    assert state_dict.keys() == {"W_enc", "W_dec", "b_dec", "b_enc"}
+    # BatchTopKSAE includes a threshold parameter for JumpReLU-style activation
+    assert state_dict.keys() == {"W_enc", "W_dec", "b_dec", "b_enc", "threshold"}
     assert cfg_dict == {
-        "architecture": "standard",
+        "architecture": "jumprelu",  # BatchTopKSAE uses threshold-based activation
         "d_in": 4096,
         "d_sae": 131072,
         "dtype": "float32",
@@ -1249,6 +1250,7 @@ def test_dictionary_learning_sae_huggingface_loader_1_andy():
     assert state_dict["W_dec"].shape == (131072, 4096)
     assert state_dict["b_dec"].shape == (4096,)
     assert state_dict["b_enc"].shape == (131072,)
+    assert state_dict["threshold"].shape == (131072,)
 
 
 def test_dictionary_learning_sae_huggingface_loader_1():
